@@ -133,12 +133,15 @@ echo "helloworld"
     ehco "A=$A"
     ```
 
-    变量可以提升为全局，供其他Shell程序使用
+    变量可以提升为全局，供其他Shell程序使用（即第60节 环境变量）
 
     ```
+    修改/etc/profile,增加如下语句
+    MYNAME="LUTAO"
+    exprot MYNAME
+    修改后要生效可以source /etc/profile或者重启机器
+    echo "MYNAE=$MYNAME"
     ```
-
-    
 
   * set命令可以显示shell的所有变量
 
@@ -146,7 +149,358 @@ echo "helloworld"
   * 字母、数字、下划线，不能以数字开头
   * 等号两边不能有空格
   * 变量名称一般用大写
+
 * 将命令的返回值赋值给变量
   * A=\`ls /home\` 用两个\`包裹就好，\`这个符号是英文输入法下的esc下面的键，反引号
   * A=$(ls /home)
+
+* 注释
+
+  ```
+  #单行注释
+  : '
+  冒号 空格 单引号开始
+  多
+  行
+  注
+  释
+  开始和结束必须独占一行
+  单引号结束
+  '
+  ```
+  
+
+
+
+# 第61小节 位置参数变量
+
+* $n
+
+  * n为数字，$0表示命令本身，$1-$9表示第一到第九个参数，第10个以上的要用${n}，比如${10}
+
+* $*
+
+  * 这个变量代表命令行中的所有参数，把所有参数看成一个整体
+
+* $@
+
+  * 这个变量代表命令行中的所有参数，但是把参数区别对待
+
+* $#
+
+  * 这个变量代表命令行中的参数个数
+
+  ```
+  #!/bin/bash
+  ehco "$0 $1 $2"
+  ehco "$*"
+  ehco "$@"
+  ehco "$#"
+  ```
+
+  
+
+# 第62小节 预定义变量
+
+即Shell设计者事先定义好了的变量
+
+* \$\$
+  * 当前进程的进程号
+* $!
+  * 后台运行的最后一个进程的进程号
+* $?
+  * 最后一次执行的命令的返回状态，0为成功，其他为失败。失败代码可自定义
+
+
+
+# 第63小节 预算符
+
+* $((运算式)) 或者 $[运算式]
+
+* expr m + n 
+
+  * 注意运算符间要用空格
+  *  +，-，\\*，/，%
+  * 注意乘号前面的反斜杠
+
+  ```
+  #!/bin/bash
+  RESULT1=$[(1+2)*3]
+  echo "$RESULT1"
+  RESULT2=$(((1+2)*3))
+  echo "$RESULT2"
+  TEMP=`expr 1 + 2`
+  RESULT3=`expr $TEMP \* 3`
+  echo "$RESULT3"
+  RESULT4=$[$1*$2]
+  echo "$RESULT4"
+  ```
+
+  
+
+# 第64小节 条件判断
+
+* 基本语法
+
+  [ 条件 ]  一定主要条件前后的空格
+
+  非空返回true，可以用%?验证，0位true，其他为false
+
+* 常用判断语句
+  * 整数比较
+    * = 字符串比较
+    * -lt 小于
+    * -le 小于等于
+    * -eq 等于
+    * -gt 大于
+    * -ge 大于等于
+    * -ne 不等于
+  * 文件权限判断
+    * -r 可读
+    * -w 可写
+    * -x 可执行
+  * 文件类型判断
+    * -f 文件存在且是常规文件
+    * -e 文件存在
+    * -d 文件存在且是一个目录
+
+* 应用实例
+
+  * [ atguigu ]					返回true
+  * \[\]                                   返回false
+  * [ 条件 ] && ehco OK || echo NotOk   条件满足则执行第一条语句
+
+  ```
+  #!/bin/bash
+  if [ "OK" = "OK" ]
+  then
+      echo "equal"
+  fi
+  
+  if [ 23 -ge 22 ]
+  then 
+      echo "大于等于"
+  fi
+  
+  if [ -e /opt/helloworld.sh ]
+  then
+      echo "文件存在"
+  fi
+  ```
+
+
+
+# 第65小节 流程控制if
+
+* 基本语法1
+
+  ```
+  if [ 条件 ];then
+  	程序
+  fi
+  ```
+
+* 基本语法2
+
+  ```
+  if [ 条件 ]
+  then
+  	程序
+  elif [ 条件 ]
+  then 
+  	程序
+  fi
+  ```
+
+```
+#!/bin/bash
+if [ 34 -gt 33 ];then
+    echo "34大于33"
+fi
+
+if [ 34 -gt 33 ]
+then
+    echo "34大于33"
+fi
+```
+
+
+
+# 第66小节 流程控制case
+
+* 基本语法
+
+  ```
+  case 变量 in
+  "值1")
+  	程序1
+  ;;
+  "值2")
+  	程序2
+  ;;
+  *)
+  	程序3
+  ;;
+  esac
+  ```
+
+```
+#!/bin/bash
+case $1 in
+"1")
+	echo "周一"
+;;
+"2")
+	ehco "周二"
+;;
+*)
+	echo "其他"
+;;
+esac
+```
+
+
+
+# 第67小节 流程控制for
+
+* 基本语法1
+
+  ```
+  for 变量 in 值1 值2 值3
+  do
+  	程序
+  done
+  ```
+
+* 基本语法2
+
+  ```
+  for((初始值;控制条件;变量变化))
+  do
+  	程序
+  done
+  ```
+
+```
+#!/bin/bash
+for i in "$*"
+do
+	echo "变量i=$i"
+done
+
+for j in "$@"
+do
+	echo "变量j=$j"
+done
+
+read -p "请输入累加值" N
+SUM=0
+for((k=0;k<=N;k++))
+do
+	SUM=$[$SUM+$k]
+done
+echo "累加结果为$SUM"
+```
+
+
+
+# 第68小节 流程控制while
+
+* 基本语法
+
+  ```
+  while [ 控制条件 ]
+  do
+  	程序
+  done
+  ```
+
+```
+#!/bin/bash
+SUM=0
+i=0
+read -p "请输入累加值" N
+while [ $i -le $N ]
+do
+	SUM=$[$SUM+$i]
+	i=$[$i+1]
+done
+echo "累加结果为$SUM"
+```
+
+
+
+# 第69小节 从控制台读取
+
+* read [选项] (参数)
+* 选项
+  * -p 指定读取时的提示符
+  * -t 指定读取等待时间
+
+```
+#!/bin/bash
+read -p "请输入一个数" NUM
+echo "您输入的为$NUM"
+read -t 5 -p "请输入另一个数" NUM2
+echo "您输入的为$NUM2"
+```
+
+
+
+# 第70小节 系统函数
+
+* basename
+
+  返回完整字符串(路径)最后一个/以后的部分，如果带了后缀则不显示后缀部分字符串
+
+  ```
+  #!/bin/bash
+  basename /opt/helloworld.sh
+  basename /opt/helloworld.sh sh
+  basename /opt/helloworld.sh .sh
+  ```
+
+* dirname
+
+  返回完整字符串(路径)最后一个/以前的部分
+
+  ```
+  #!/bin/bash
+  dirname /opt/helloworld.sh
+  ```
+
+  
+
+# 第71小节 自定义函数
+
+* 基本语法
+
+  ```
+  function 函数名 ()
+  {
+  	程序
+  	return 返回值;   #返回值可以省略
+  }
+  函数的返回值通过$?的方式读取
+  ```
+
+```
+#!/bin/bash
+fuction GetSum()
+{
+	SUM=$[$1+$2]
+	return $SUM;
+}
+
+SUM=$(GetSum(1 2))
+echo "$SUM"function GetSum()
+{
+	SUM1=$[$1+$2]
+    echo "$SUM1"
+	return $SUM1;
+}
+GetSum 1 2
+SUM=$?
+echo "$SUM"
+```
 
