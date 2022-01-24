@@ -893,6 +893,30 @@
 
 
 
+# 第52小节 RPM包管理
+
+​	rpm是一种用于互联网下载包的打包及安装工具，它包含在某些Linux分发版中。它生成具有.rpm拓展名的文件。RPM是RedHat Package Manager(RedHat软件包管理工具)的缩写，类似于windows的setup.exe，这一文件格式名称虽然打上了RedHat的标志，但理念是通用的。
+
+* 查询所有安装的软件包`rpm -qa`
+* 查询安装的软件包的信息`rpm -qi xxx`
+* 查询软件包的安装文件信息（文件安装在哪）`rpm -ql xxx`
+
+* 查询文件属于哪个软件包`rpm -qf file`
+* 卸载软件包`rpm -e xxxx`
+
+* 安装软件包`rpm -ivh rpm包的路径`
+
+
+
+# 第53小节 yum
+
+​	yum是一个shell前端软件包管理器。基于rpm包管理，能够从指定的服务器自动下载rpm包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软件包。
+
+ *  查询yum服务器是否有需要安装的软件`yum list | grep xxx`
+ *  安装指定的yum包`yum install xxx`
+
+
+
 
 # 第58小节 Shell快速入门
 
